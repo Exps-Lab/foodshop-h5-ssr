@@ -1,0 +1,57 @@
+{
+  "name": "test-vite",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "npm run server:dev",
+    "server:dev": "cross-env NODE_ENV=development node ./server/index.js",
+    "server:prod": "cross-env NODE_ENV=production node ./server/index.js",
+    "prod": "npm run build && npm run server:prod",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build --ssrManifest --outDir hi-user-ssr/client",
+    "build:server": "bash ./build/server.sh",
+    "deploy": "upload-remote -r ./hi-user-ssr -n hi-user-ssr",
+    "remote_build": "npm run build:prod && node ./build/pre_upload.js && npm run deploy",
+    "lint": "eslint --ext .js,.vue src --fix",
+    "tag": "bash build/new_tag.sh"
+  },
+  "dependencies": {
+    "@sentry/vite-plugin": "^2.4.0",
+    "@sentry/vue": "^7.60.0",
+    "axios": "^0.26.1",
+    "chalk": "^2.4.2",
+    "cross-env": "^7.0.3",
+    "express": "^4.18.2",
+    "js-cookie": "^3.0.1",
+    "pinia": "^2.1.7",
+    "sirv": "^2.0.3",
+    "vant": "^3.6.1",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "@vue/compiler-sfc": "^3.3.4",
+    "autoprefixer": "^10.4.4",
+    "eslint": "^8.30.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.6.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-vue": "^9.8.0",
+    "husky": "^8.0.2",
+    "less": "^4.1.2",
+    "lint-staged": "^13.1.0",
+    "nodemon": "^3.0.1",
+    "postcss-pxtorem": "^6.0.0",
+    "unplugin-vue-components": "^0.22.4",
+    "vite": "^4.4.9",
+    "vite-plugin-eslint": "^1.8.1"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,vue}": [
+      "eslint --fix"
+    ]
+  },
+  "type": "module"
+}

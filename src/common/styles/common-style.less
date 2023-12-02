@@ -1,0 +1,96 @@
+
+
+// fixed元素添加底部安全区域
+.safe-bottom-area {
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+// 文本加重
+.font-bold-weight {
+  font-weight: 500;
+}
+.font-bold-weight-5 {
+  font-weight: 500;
+}
+.font-bold-weight-4 {
+  font-weight: 400;
+}
+
+// 单行省略
+.text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}
+
+.fix-elm-center {
+  max-width: 750px;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+.elm-center {
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+// 带有ui色块的列表header
+.list-box__header {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  line-height: 1.2;
+  color: @text-5;
+  font-weight: 400;
+  padding-left: 10px;
+  margin-top: 15px;
+  &::before {
+    content: ' ';
+    display: inline-block;
+    width: 4px;
+    height: 14px;
+    background: @brand1-6;
+    border-radius: 4px;
+    margin-right: 6px;
+  }
+  &.yellow {
+    &::before {
+      background-color: @yellow-6;
+    }
+  }
+}
+
+// 简单推荐列表拆分
+.com-box__list {
+  .com_list__ul {
+    font-size: 15px;
+    color: @text-4;
+    .com_list__li {
+      padding: 10px 15px;
+      border-bottom: 1px solid @line-1;
+      &.big-padding {
+        padding: 20px 15px;
+      }
+      &:last-child {
+        border-bottom: 0;
+      }
+      .item-top__main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 16px;
+        .item-top__right {
+          font-size: 12px;
+          color: @text-3;
+        }
+      }
+      .item-top__sub {
+        font-size: 12px;
+        color: @text-3;
+        margin-top: 6px;
+      }
+    }
+  }
+}
