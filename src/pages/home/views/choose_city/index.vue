@@ -61,7 +61,7 @@ const backToRoiPage = (city_name) => {
   }
   from && (query.from = from)
   router.push({
-    path: '/roiPicker',
+    path: '/home/roiPicker',
     query
   })
 }

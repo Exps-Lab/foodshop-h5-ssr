@@ -11,32 +11,32 @@ const routes = [
     component: () => import('../views/home/index.vue')
   },
   {
-    path: '/roiPicker',
+    path: '/home/roiPicker',
     name: 'roiPicker',
     component: () => import('../views/roi_picker/index.vue')
   },
   {
-    path: '/chooseCity',
+    path: '/home/chooseCity',
     name: 'chooseCity',
     component: () => import('../views/choose_city/index.vue')
   },
   {
-    path: '/searchResult',
+    path: '/home/searchResult',
     name: 'searchResult',
     component: () => import('../views/search_result/index.vue')
   },
   {
-    path: '/shopTopic',
+    path: '/home/shopTopic',
     name: 'shopTopic',
     component: () => import('../views/shop_topic/index.vue')
   },
   {
-    path: '/shopDetail',
+    path: '/home/shopDetail',
     name: 'shopDetail',
     component: () => import('../views/shop_detail/index.vue')
   },
   {
-    path: '/shopDetail/map',
+    path: '/home/shopDetail/map',
     name: 'shopDetailMap',
     component: () => import('../views/shop_detail/show_in_map.vue')
   },

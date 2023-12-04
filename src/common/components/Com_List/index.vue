@@ -187,7 +187,7 @@ watch(
 
 // 获取当前定位
 const getPosNow = () => {
-  try {
+  if (!import.meta.env.SSR) {
     // 用户选择位置
     const getChosePos = JSON.parse(sessionStorage.getItem(HOMECHOSEPOS)) || null
     // 腾讯定位位置
@@ -195,8 +195,6 @@ const getPosNow = () => {
     const originData = getChosePos || appPos
     const { lat, lng } = originData
     nowPosStr.value = `${lat},${lng}`
-  } catch (err) {
-    getData()
   }
 }
 

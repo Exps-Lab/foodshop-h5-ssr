@@ -40,7 +40,7 @@ const getSuggestData = () => {
 const toCategoryPage = (data) => {
   const { name, id } = data
   router.push({
-    path: '/shopTopic',
+    path: '/home/shopTopic',
     query: {
       categoryId: id,
       categoryName: name

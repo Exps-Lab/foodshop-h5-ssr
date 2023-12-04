@@ -2,19 +2,32 @@ import express from 'express'
 import path from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
+import { generateInput } from '../viteConf/bundle.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const { modulesNameArr } = generateInput()
 
+// 判断url属于哪个模块
 const includeModuleName = (url) => {
   let resModuleName = ''
-  const modulesArr = ['home', 'login', 'order', 'ucenter']
-  for (let module of modulesArr) {
+  for (let module of modulesNameArr) {
     if (url.includes(module)) {
       resModuleName = module
       break
     }
   }
   return resModuleName
+}
+
+// 生成模块的资源链接
+const generateTemplatePathMap = () => {
+  return modulesNameArr.reduce((resMap, module) => {
+    resMap[module] = {
+      index: path.resolve(__dirname, `../src/pages/${module}/index.html`),
+      server: path.resolve(__dirname, `../src/pages/${module}/entry/${module}.entry.server.js`)
+    }
+    return resMap
+  }, {})
 }
 
 const createServer = async () => {
@@ -31,24 +44,7 @@ const createServer = async () => {
     try {
       const url = req.originalUrl;
       const moduleName = includeModuleName(url)
-      const templatePathMap = {
-        'home': {
-          index: path.resolve(__dirname, '../src/pages/home/index.html'),
-          server: path.resolve(__dirname, '../src/pages/home/entry/home.entry.server.js'),
-        },
-        'login': {
-          index: path.resolve(__dirname, '../src/pages/login/index.html'),
-          server: path.resolve(__dirname, '../src/pages/login/entry/login.entry.server.js'),
-        },
-        'order': {
-          index: path.resolve(__dirname, '../src/pages/order/index.html'),
-          server: path.resolve(__dirname, '../src/pages/order/entry/order.entry.server.js'),
-        },
-        'ucenter': {
-          index: path.resolve(__dirname, '../src/pages/ucenter/index.html'),
-          server: path.resolve(__dirname, '../src/pages/ucenter/entry/ucenter.entry.server.js'),
-        }
-      }
+      const templatePathMap = generateTemplatePathMap()
 
       if (moduleName) {
         // 读取公共html，并用vite处理

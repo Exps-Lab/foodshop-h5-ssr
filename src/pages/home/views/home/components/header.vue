@@ -31,7 +31,7 @@ const constData = reactive({
 })
 
 const getPos = async () => {
-  try {
+  if (!import.meta.env.SSR) {
     const { title = '' } = JSON.parse(sessionStorage.getItem(HOMECHOSEPOS)) || {}
     if (title) {
       constData.pos = title
@@ -41,15 +41,11 @@ const getPos = async () => {
     const { addr, district, city } = await store.getPosByTXReq()
     constData.pos = addr || district || city
     constData.isPosing = false
-  } catch (err) {
-    const { addr, district, city } = await store.getPosByTXReq()
-    constData.pos = addr || district || city
-    constData.isPosing = false
   }
 }
 
 const toGlobalSearchPage = () => {
-  router.push({ path: '/searchResult' })
+  router.push({ path: '/home/searchResult' })
 }
 
 const handleScroll = () => {
@@ -61,7 +57,7 @@ const handleScroll = () => {
 
 const toPOIPickerPage = () => {
   router.push({
-    path: '/roiPicker',
+    path: '/home/roiPicker',
     query: {
       from: 'home'
     }

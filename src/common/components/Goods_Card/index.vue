@@ -61,7 +61,7 @@ const costTime = computed(() => {
 const toDetail = (data) => {
   const { id: shop_id, pos } = data
   diffModuleJump(
-    '/shopDetail',
+    '/home/shopDetail',
     `shop_id=${shop_id}&current_pos=${pos.lat},${pos.lng}`,
     'home'
   )

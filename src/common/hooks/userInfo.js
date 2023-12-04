@@ -15,15 +15,13 @@ export function useUserInfo () {
 
   // 统一抽离获取用户信息入口
   const getUserData = () => {
-    try {
+    if (!import.meta.env.SSR) {
       const storageUserInfo = JSON.parse(localStorage.getItem(storageKey) || '{}')
       if (!storageUserInfo?.username) {
         reqUserInfo()
       } else {
         userInfo = Object.assign(userInfo, storageUserInfo)
       }
-    } catch (err) {
-      reqUserInfo()
     }
     loading.value = false
   }

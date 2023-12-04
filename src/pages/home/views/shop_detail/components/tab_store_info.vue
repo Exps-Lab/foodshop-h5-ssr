@@ -76,7 +76,7 @@ const phoneShop = () => {
 const showAddressInMap = () => {
   const { lat, lng } = props.shopInfo.pos || {}
   router.push({
-    path: '/shopDetail/map',
+    path: '/home/shopDetail/map',
     query: {
       shop_pos: `${lat},${lng}`,
       shop_name: props.shopInfo.name,

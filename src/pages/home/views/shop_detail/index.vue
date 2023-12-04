@@ -100,8 +100,14 @@ const commentTitle = computed(() => {
     : '评论'
 })
 
+let lat = ''
+let lng = ''
 /* 商铺详情部分 */
-const { lat, lng } = JSON.parse(localStorage.getItem('appPos') || '{}')
+if (!import.meta.env.SSR) {
+  const parseData = JSON.parse(localStorage.getItem('appPos') || '{}')
+  lat = parseData.lat
+  lng = parseData.lng
+}
 const shopBaseInfo = reactive({})
 const getShopInfo = async () => {
   const { data } = await getShopDetail({ shop_id, current_pos: `${lat},${lng}` })
@@ -246,7 +252,9 @@ const getOneMoreData = async (orderNum) => {
 
 const init = async () => {
   const { order_num } = route.query
-  await getShopInfo()
+  if (!import.meta.env.SSR) {
+    await getShopInfo()
+  }
   if (order_num) {
     await getOneMoreData(order_num)
   }

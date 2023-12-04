@@ -56,7 +56,7 @@ const ComListFilter = reactive({
 })
 
 const toGlobalSearchPage = () => {
-  router.push({ path: '/searchResult' })
+  router.push({ path: '/home/searchResult' })
 }
 
 getSubCategoryData()

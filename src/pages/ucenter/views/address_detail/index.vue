@@ -143,7 +143,7 @@
   // 点击跳转选择地址页面
   const choseAddress = () => {
     const query = 'from=address' + (formMode === 'update' ? `&addressId=${address_id}` : '')
-    diffModuleJump('/roiPicker', query, 'home')
+    diffModuleJump('/home/roiPicker', query, 'home')
   }
 
   // 选择tag

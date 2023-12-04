@@ -5,8 +5,11 @@ const AppName = 'hiUser'
 const storageName = 'appPos'
 let retryAccuratePos = false
 let forceUpdatePos = false
-const qq = () => {}
-// const qq = window.qq
+
+let qq = () => {}
+if (!import.meta.env.SSR) {
+  qq = window.qq
+}
 
 // 处理定位入口
 const getPosByTX = async (options) => {
@@ -25,30 +28,15 @@ const getPosByTX = async (options) => {
 // 获取精确定位
 const getAccuratePos = () => {
   return new Promise((resolve, reject) => {
-    try {
-      const geolocation = new qq.maps.Geolocation(TXKey, AppName)
-      geolocation.getLocation(async (position) => {
-        console.log('geolocation定位成功')
-        // [note] 兼容chrome定位不准确
-        position.district = position.district || position.city
-        await handlePosStorage('add', position)
-        resolve(position)
-      }, function () {
-        console.log('尝试ip定位')
-        getPosByTXIP()
-          .then(async data => {
-            await handlePosStorage('add', data)
-            resolve(data)
-          })
-          .catch(errData => {
-            reject(errData)
-          })
-      }, {
-        // 精确定位接口超时时间
-        timeout: 3 * 1000,
-        failTipFlag: true
-      })
-    } catch (err) {
+    const geolocation = new qq.maps.Geolocation(TXKey, AppName)
+    geolocation.getLocation(async (position) => {
+      console.log('geolocation定位成功')
+      // [note] 兼容chrome定位不准确
+      position.district = position.district || position.city
+      await handlePosStorage('add', position)
+      resolve(position)
+    }, function () {
+      console.log('尝试ip定位')
       getPosByTXIP()
         .then(async data => {
           await handlePosStorage('add', data)
@@ -57,7 +45,11 @@ const getAccuratePos = () => {
         .catch(errData => {
           reject(errData)
         })
-    }
+    }, {
+      // 精确定位接口超时时间
+      timeout: 3 * 1000,
+      failTipFlag: true
+    })
   })
 }
 

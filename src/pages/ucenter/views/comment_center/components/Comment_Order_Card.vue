@@ -38,7 +38,7 @@
 
   const toShopDetail = (cardItem) => {
     const { shop_id } = cardItem
-    diffModuleJump('/shopDetail', `shop_id=${shop_id}`, 'home')
+    diffModuleJump('/home/shopDetail', `shop_id=${shop_id}`, 'home')
   }
   const toCommentForm = (cardItem) => {
     const { order_num } = cardItem

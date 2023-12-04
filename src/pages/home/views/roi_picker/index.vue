@@ -116,7 +116,7 @@ const chooseCity = () => {
   }
   fromPage && (query.from = fromPage)
   router.push({
-    path: '/chooseCity',
+    path: '/home/chooseCity',
     query
   })
 }

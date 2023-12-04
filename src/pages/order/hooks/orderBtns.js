@@ -50,7 +50,7 @@ export function useOrderBtns () {
   // 再来一单
   const handleOneMore = (orderInfo) => {
     const { order_num, shop_id } = orderInfo
-    diffModuleJump('/shopDetail', `shop_id=${shop_id}&order_num=${order_num}`, 'home')
+    diffModuleJump('/home/shopDetail', `shop_id=${shop_id}&order_num=${order_num}`, 'home')
   }
   // 跳转订单评论表单
   const handleComment = (orderInfo) => {

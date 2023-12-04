@@ -87,7 +87,7 @@ const toOrderDetail = (data) => {
 }
 const toShopDetail = (data) => {
   const { shop: { id } } = data
-  diffModuleJump('/shopDetail', `shop_id=${id}`, 'home')
+  diffModuleJump('/home/shopDetail', `shop_id=${id}`, 'home')
 }
 </script>
 
