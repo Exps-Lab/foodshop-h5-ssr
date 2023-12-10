@@ -1,6 +1,6 @@
 // 获取定位中经纬度信息
 
-import { defineStore, createPinia } from 'pinia'
+import { defineStore } from 'pinia'
 import { getPosByTX } from '@utils/getAccuratePos'
 
 export const posStore = defineStore('posStore', {
@@ -30,11 +30,3 @@ export const posStore = defineStore('posStore', {
     }
   }
 })
-
-export const createStore = () => {
-  const pinia = createPinia()
-  posStore(pinia)
-  return pinia
-}
-
-export default createStore

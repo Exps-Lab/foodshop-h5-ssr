@@ -13,29 +13,19 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getKingKongSuggest } from '@api/home'
+import { homeStore } from '@/pages/home/store/home.js'
 
 const router = useRouter()
-const data = reactive({
-  loading: false,
-  suggestData: []
-})
 
-const getSuggestData = () => {
-  data.loading = true
-  getKingKongSuggest()
-    .then(res => {
-      data.suggestData = res.data
-    })
-    .catch(err => {
-      console.log(err)
-    })
-    .finally(() => {
-      data.loading = false
-    })
-}
+const { $state: state } = homeStore()
+const data = computed(() => {
+  return {
+    loading: state.loading,
+    suggestData: state.suggestData
+  }
+})
 
 const toCategoryPage = (data) => {
   const { name, id } = data
@@ -47,8 +37,6 @@ const toCategoryPage = (data) => {
     }
   })
 }
-
-getSuggestData()
 </script>
 
 <style lang="less" scoped>

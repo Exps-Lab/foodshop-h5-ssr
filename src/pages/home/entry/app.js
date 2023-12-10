@@ -1,7 +1,7 @@
 import { createSSRApp } from 'vue'
 import App from '../App.vue'
 import { createRouter } from '../router/index.js'
-import { createStore } from '../store/pos.js'
+import { createStore } from '../store/index.js'
 import Toast from '@/plugins/Toast'
 import '@common/styles/reset.less'
 import '@common/styles/common-style.less'
