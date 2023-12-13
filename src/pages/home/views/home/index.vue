@@ -15,21 +15,13 @@ import KingKongSuggest from './components/king_kong_suggest.vue'
 import FooterBeian from './components/footer_beian.vue'
 import ComList from '@common/components/Com_List/index.vue'
 import { defineOptions } from 'vue'
-
-// const collectAsync = () => {
-//   const componentsArr = [MainHeader, Tabbar, KingKongSuggest, FooterBeian, ComList]
-//   return componentsArr.reduce((asyncArr, component) => {
-//     if (component.asyncData && component.asyncData.constructor === Function) {
-//       asyncArr.push(component.asyncData)
-//     }
-//     return asyncArr
-//   }, [])
-// }
-// collectAsync()
+import { homeStore } from '@/pages/home/store/home.js'
+import { posStore } from '@/pages/home/store/pos.js'
 
 defineOptions({
   asyncData: async (store) => {
-    await store._s.get('homeStore').getSuggestData()
+    await homeStore(store).getSuggestData()
+    await posStore(store).getPos()
   }
 })
 

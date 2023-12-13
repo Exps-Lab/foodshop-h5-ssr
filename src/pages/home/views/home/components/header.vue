@@ -2,8 +2,8 @@
   <div class="self-header">
     <section :class="['pos-text', constData.minsizePos && 'minsize']" @click="toPOIPickerPage">
       <van-icon class="location-icon font-bold-weight" name="location-o" />
-      <span class="font-bold-weight" v-if="constData.isPosing">定位中...</span>
-      <span class="font-bold-weight text-ellipsis" v-else>{{constData.pos}}></span>
+      <span class="font-bold-weight" v-if="state.constData.isPosing">定位中...</span>
+      <span class="font-bold-weight text-ellipsis" v-else>{{state.constData.pos}}></span>
     </section>
     <van-search
       readonly
@@ -18,31 +18,14 @@
 import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { posStore } from '@pages/home/store/pos'
-import { HOMECHOSEPOS } from '@utils/sessionStorage_keys'
 
-const store = posStore()
+const { $state: state } = posStore()
 
 const router = useRouter()
 const brandMain = 'rgb(2, 182, 253)'
 const constData = reactive({
-  isPosing: true,
-  pos: '',
   minsizePos: false
 })
-
-const getPos = async () => {
-  if (!import.meta.env.SSR) {
-    const { title = '' } = JSON.parse(sessionStorage.getItem(HOMECHOSEPOS)) || {}
-    if (title) {
-      constData.pos = title
-      constData.isPosing = false
-      return true
-    }
-    const { addr, district, city } = await store.getPosByTXReq()
-    constData.pos = addr || district || city
-    constData.isPosing = false
-  }
-}
 
 const toGlobalSearchPage = () => {
   router.push({ path: '/home/searchResult' })
@@ -64,7 +47,6 @@ const toPOIPickerPage = () => {
   })
 }
 
-getPos()
 onMounted(() => {
   handleScroll()
 })
