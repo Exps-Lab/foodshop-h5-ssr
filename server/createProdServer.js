@@ -46,17 +46,17 @@ const createServer = async () => {
         const ssrManifest = fs.readFileSync('./hi-user-ssr/client/ssr-manifest.json', 'utf-8')
 
         const { render } = await import(templatePathMap[moduleName].server)
-        const [ renderedHtml, renderState ] = await render(url, ssrManifest)
+        const [ renderedHtml ] = await render(url, ssrManifest)
 
         // 传递 Pinia 状态管理，自定义 window 属性 __store。
-        let appState = '';
-        if (renderState) {
-          appState = "<script>window.__store='" + JSON.stringify(renderState) + "'</script>";
-        }
+        // let appState = '';
+        // if (renderState) {
+        //   appState = "<script>window.__store='" + JSON.stringify(renderState) + "'</script>";
+        // }
 
         const html = templateIndexHtml
           .replace(`<!--app-html-->`, renderedHtml)
-          .replace(`<!--app-state-->`, appState);
+          // .replace(`<!--app-state-->`, appState);
 
         res.status(200).set({'Content-Type': 'text/html'}).end(html)
       } else {

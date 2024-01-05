@@ -1,10 +1,12 @@
 <template>
-  <div class="main-content">
-    <MainHeader />
-    <KingKongSuggest />
-    <ComList :filter="ComListFilter" />
-    <FooterBeian />
-  </div>
+  <Suspense>
+    <div class="main-content">
+      <MainHeader />
+      <KingKongSuggest />
+      <ComList :filter="ComListFilter" />
+      <FooterBeian />
+    </div>
+  </Suspense>
   <Tabbar :active="0" />
 </template>
 
@@ -15,12 +17,12 @@ import KingKongSuggest from './components/king_kong_suggest.vue'
 import FooterBeian from './components/footer_beian.vue'
 import ComList from '@common/components/Com_List/index.vue'
 import { defineOptions } from 'vue'
-import { homeStore } from '@/pages/home/store/home.js'
+// import { homeStore } from '@/pages/home/store/home.js'
 import { posStore } from '@/pages/home/store/pos.js'
 
 defineOptions({
   asyncData: async (store) => {
-    await homeStore(store).getSuggestData()
+    // await homeStore(store).getSuggestData()
     await posStore(store).getPos()
   }
 })

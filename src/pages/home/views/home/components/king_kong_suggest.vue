@@ -13,30 +13,46 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { reactive, onServerPrefetch } from 'vue'
 import { useRouter } from 'vue-router'
-import { homeStore } from '@/pages/home/store/home.js'
+import { getKingKongSuggest } from '@api/home/index.js'
 
 const router = useRouter()
 
-const { $state: state } = homeStore()
-const data = computed(() => {
-  return {
-    loading: state.loading,
-    suggestData: state.suggestData
-  }
+const data = reactive({
+  loading: false,
+  suggestData: []
 })
+
+const getSuggestData = async () => {
+  data.loading = true
+  await getKingKongSuggest()
+    .then(res => {
+      data.suggestData = res.data
+    })
+    .catch(err => {
+      console.log(err)
+    })
+    .finally(() => {
+      data.loading = false
+    })
+}
 
 const toCategoryPage = (data) => {
   const { name, id } = data
   router.push({
-    path: '/home/shopTopic',
+    path: '/shopTopic',
     query: {
       categoryId: id,
       categoryName: name
     }
   })
 }
+
+onServerPrefetch(async () => {
+  await getSuggestData()
+})
+await getSuggestData()
 </script>
 
 <style lang="less" scoped>

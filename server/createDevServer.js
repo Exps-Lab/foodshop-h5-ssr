@@ -53,17 +53,17 @@ const createServer = async () => {
 
         // 转换url为html
         const { render } = await viteServer.ssrLoadModule(templatePathMap[moduleName].server);
-        const [ appHtml, renderState ] = await render(url);
+        const [ appHtml ] = await render(url);
 
-        // 传递 Pinia 状态管理。自定义 window 属性 __pinia
-        let appState = '';
-        if (renderState) {
-          appState = "<script>window.__store='" + JSON.stringify(renderState) + "'</script>";
-        }
+        // // 传递 Pinia 状态管理。自定义 window 属性 __pinia
+        // let appState = '';
+        // if (renderState) {
+        //   appState = "<script>window.__store='" + JSON.stringify(renderState) + "'</script>";
+        // }
 
         const html = template
           .replace(`<!--app-html-->`, appHtml)
-          .replace(`<!--app-state-->`, appState);
+          // .replace(`<!--app-state-->`, appState);
         res.status(200).set({'Content-Type': 'text/html'}).end(html);
       } else {
         res.status(404).set({'Content-Type': 'text/text'}).end('404啦~~');
