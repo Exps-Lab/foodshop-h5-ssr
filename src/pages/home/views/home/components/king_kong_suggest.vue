@@ -1,31 +1,23 @@
 <template>
-  <div class="category-container" v-loading="data.loading">
+  <div class="category-container" v-loading="ssrData.loading">
     <section
       class="box"
-      v-for="item in data.suggestData"
+      v-for="item in ssrData.suggestData"
       :key="item.category_id"
       @click="toCategoryPage(item)">
       <img class="img" :src="item.image_url" alt="categoryAvatar">
       <span class="name">{{item.name}}</span>
     </section>
-    <section v-if="!data.suggestData.length && !data.loading" class="box no-data">暂无分类</section>
+    <section v-if="!ssrData.suggestData.length && !ssrData.loading" class="box no-data">暂无分类</section>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { homeStore } from '@/pages/home/store/home.js'
 
 const router = useRouter()
-
-const { $state: state } = homeStore()
-const data = computed(() => {
-  return {
-    loading: state.loading,
-    suggestData: state.suggestData
-  }
-})
+const { ssrData } = homeStore()
 
 const toCategoryPage = (data) => {
   const { name, id } = data

@@ -9,6 +9,11 @@ export const homeStore = defineStore('homeStore', {
       loading: false
     }
   },
+  getters: {
+    ssrData (state) {
+      return state.$state
+    }
+  },
   actions: {
     async getSuggestData () {
       this.loading = true
