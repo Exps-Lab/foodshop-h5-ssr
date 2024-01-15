@@ -19,19 +19,17 @@
         <p class="note-box text-ellipsis">公告：{{shopBaseInfo.intro_text}}</p>
       </section>
       <section class="shop-content-nav">
+        <!-- [warn] vant-tabs ssr渲染bug，在tabs里的内容不会被ssr渲染 -->
         <van-tabs
-          shrink sticky border
-          line-width="20px" line-height="2px" @click-tab="menuTabClick" v-model:active="activeMenuName">
-          <van-tab title="点餐" name="order">
-            <ShopMenu :shopId="shop_id" :choseGoods="choseGoods" />
-          </van-tab>
-          <van-tab :title="commentTitle" name="comment">
-            <CommentInfo :shopId="shop_id" />
-          </van-tab>
-          <van-tab title="商家" name="store">
-            <StoreInfo :shopInfo="shopBaseInfo" />
-          </van-tab>
+          shrink sticky border line-width="20px" line-height="2px"
+          @click-tab="menuTabClick" v-model:active="activeMenuName">
+          <van-tab title="点餐" name="order"></van-tab>
+          <van-tab :title="commentTitle" name="comment"></van-tab>
+          <van-tab title="商家" name="store"></van-tab>
         </van-tabs>
+        <ShopMenu :shopId="shop_id" :choseGoods="choseGoods" v-show="activeMenuName === 'order'" />
+        <StoreInfo :shopInfo="shopBaseInfo" v-show="activeMenuName === 'store'" />
+        <CommentInfo :shopId="shop_id" v-show="activeMenuName === 'comment'" />
       </section>
     </div>
 
@@ -74,7 +72,7 @@
 
 <script setup>
 import { Toast } from 'vant'
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, defineOptions } from 'vue'
 import { useRoute } from 'vue-router'
 import InfoDetailModal from './components/info_detail_modal.vue'
 import ShoppingCartModal from './components/shopping_bag_modal.vue'
@@ -84,14 +82,23 @@ import ShopMenu from './components/tab_menu_info.vue'
 import CommentInfo from './components/tab_comment_info.vue'
 
 // searchShopGoods 搜索具体商品接口
-import { getShopDetail, addShoppingBag } from '@api/shop'
+import { addShoppingBag } from '@api/shop'
 import { addCollect, removeCollect } from '@api/collect'
 import { getOrderDetail } from '@/api/order'
 import { priceHandle, diffModuleJump, clearObj } from '@utils'
 import { calcTotalBagFee, orderTotalNeedPay } from '@utils/calcGoodsPrice'
+import { shopDetailStore } from '@pages/home/store/shop_detail.js'
 
 const route = useRoute()
 const { shop_id } = route.query
+
+defineOptions({
+  asyncData: async (store, router) => {
+    const { shop_id } = router.query
+    await shopDetailStore(store).getShopInfo({ shop_id })
+    await shopDetailStore(store).getShopGoodsData({ shop_id })
+  }
+})
 
 // 评论动态标题
 const commentTitle = computed(() => {
@@ -100,20 +107,6 @@ const commentTitle = computed(() => {
     : '评论'
 })
 
-let lat = ''
-let lng = ''
-/* 商铺详情部分 */
-if (!import.meta.env.SSR) {
-  const parseData = JSON.parse(localStorage.getItem('appPos') || '{}')
-  lat = parseData.lat
-  lng = parseData.lng
-}
-const shopBaseInfo = reactive({})
-const getShopInfo = async () => {
-  const { data } = await getShopDetail({ shop_id, current_pos: `${lat},${lng}` })
-  Object.assign(shopBaseInfo, data)
-  isCollectShop.value = shopBaseInfo.shopCollected
-}
 // 商铺顶部背景
 const shopBgUrl = computed(() => {
   const avatar = shopBaseInfo.shop_image?.avatar || ''
@@ -134,7 +127,6 @@ const collectShop = async () => {
     isCollectShop.value = !isCollectShop.value
   } catch (err) {
     console.log(err)
-    // Toast.fail(err.data.msg)
   }
 }
 
@@ -161,7 +153,7 @@ const clearShoppingCart = () => {
 }
 
 /* 控制菜单切换 */
-const activeMenuName = ref('menu')
+const activeMenuName = ref('order')
 const menuTabClick = ({ title, name }) => {
   activeMenuName.value = name
 }
@@ -250,11 +242,14 @@ const getOneMoreData = async (orderNum) => {
   }
 }
 
+// ssr服务端数据
+const { ssrData } = shopDetailStore()
+const shopBaseInfo = reactive({})
+Object.assign(shopBaseInfo, ssrData.shopBaseInfo)
+isCollectShop.value = shopBaseInfo.shopCollected
+
 const init = async () => {
   const { order_num } = route.query
-  if (!import.meta.env.SSR) {
-    await getShopInfo()
-  }
   if (order_num) {
     await getOneMoreData(order_num)
   }

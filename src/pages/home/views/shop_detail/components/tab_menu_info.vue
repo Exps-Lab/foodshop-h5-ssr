@@ -76,10 +76,10 @@
 <script setup>
   import { Toast } from 'vant'
   import { ref, reactive, computed } from 'vue'
-  import { getShopGoods } from '@api/shop'
   import { getShowPrice } from '@utils/calcGoodsPrice'
   import GoodsSpec from './goods_spec.vue'
   import { useShopDetail } from '../hooks/shopDetail'
+  import { shopDetailStore } from '@pages/home/store/shop_detail.js'
 
   const { handleBuyAnimate } = useShopDetail()
   const props = defineProps({
@@ -95,13 +95,19 @@
     }
   })
 
-  // 菜单数据
+  // ssr服务端数据
+  const { ssrData } = shopDetailStore()
   const menuData = reactive([])
-  const getMenuData = async () => {
-    const { data } = await getShopGoods({ shop_id: props.shopId })
-    Object.assign(menuData, data)
-  }
-  getMenuData()
+  Object.assign(menuData, ssrData.menuData)
+
+  // 菜单数据
+  // const menuData = reactive([])
+  // const getMenuData = async () => {
+  //   const { data } = await getShopGoods({ shop_id: props.shopId })
+  //   Object.assign(menuData, data)
+  // }
+  // getMenuData()
+
   // 选中菜单种类
   const activeIndex = ref(0)
   const activeCategoryData = computed(() => {

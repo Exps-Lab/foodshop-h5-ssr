@@ -10,8 +10,9 @@ const { modulesNameArr } = generateInput()
 // 判断url属于哪个模块
 const includeModuleName = (url) => {
   let resModuleName = ''
+  let baseUrl = url.split('?')[0]
   for (let module of modulesNameArr) {
-    if (url.includes(module)) {
+    if (baseUrl.includes(module)) {
       resModuleName = module
       break
     }

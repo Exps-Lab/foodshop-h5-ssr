@@ -23,7 +23,7 @@ let redirecturi = ''
 
 const service = axios.create({
   timeout: 30 * 1000,
-  baseURL: 'http://127.0.0.1:3000'
+  baseURL: 'http://localhost:3000'
 })
 
 // Sign in the request interceptors.

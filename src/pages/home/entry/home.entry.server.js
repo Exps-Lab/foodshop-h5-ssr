@@ -14,7 +14,7 @@ export async function render (url) {
   if (matchedComponents.length) {
     await Promise.all(matchedComponents.map(async component => {
       if (component.asyncData) {
-        return component.asyncData(store)
+        return component.asyncData(store, router.currentRoute.value)
       }
       return null
     }))
