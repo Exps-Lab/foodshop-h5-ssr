@@ -15,8 +15,8 @@ export const shopDetailStore = defineStore('shopDetailStore', {
     }
   },
   actions: {
-    async getShopInfo (reqData) {
-      const { data } = await getShopDetail(reqData)
+    async getShopInfo (reqData, ctx) {
+      const { data } = await getShopDetail(reqData, ctx)
       this.shopBaseInfo = data
     },
     async getShopGoodsData (reqData) {

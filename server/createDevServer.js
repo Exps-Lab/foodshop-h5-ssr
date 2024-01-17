@@ -3,6 +3,7 @@ import path from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
 import { generateInput } from '../viteConf/bundle.js'
+// import { createProxyMiddleware } from 'http-proxy-middleware'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { modulesNameArr } = generateInput()
@@ -40,6 +41,7 @@ const createServer = async () => {
     appType: 'custom'
   })
   app.use(viteServer.middlewares)
+  // app.use('/h5/user', createProxyMiddleware({ target: 'http://localhost:3000', changeOrigin: true }));
 
   app.get('*', async (req, res, next) => {
     try {
@@ -54,7 +56,9 @@ const createServer = async () => {
 
         // 转换url为html
         const { render } = await viteServer.ssrLoadModule(templatePathMap[moduleName].server);
-        const [ appHtml, renderState ] = await render(url);
+        const [ appHtml, renderState ] = await render(url, {
+          cookies: req.headers.cookie
+        });
 
         // 传递 Pinia 状态管理。自定义 window 属性 __pinia
         let appState = '';

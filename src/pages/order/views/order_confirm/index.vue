@@ -2,10 +2,14 @@
 
 <template>
   <div class="main-content">
-    <ChoseAddress ref="addressRef" :shopPos="shopData.pos" :shoppingBagId="shoppingBagId" />
+    <ClientOnly>
+      <ChoseAddress ref="addressRef" :shopPos="shopData.pos" :shoppingBagId="shoppingBagId" />
+    </ClientOnly>
     <GoodsCard :shopData="shopData" :choseGoodsData="choseGoodsData" :price="getPayPrice" :shopDiscount="shopDiscount"/>
     <ChosePayChannel />
-    <OrderExtra :submitForm="submitForm" />
+    <ClientOnly>
+      <OrderExtra :submitForm="submitForm" />
+    </ClientOnly>
     <van-submit-bar
       class="submit-btn"
       :price="getPayPrice.payPrice * 100"
@@ -32,6 +36,7 @@
   import ChoseAddress from './components/Chose_Address.vue'
   import GoodsCard from './components/Goods_Card.vue'
   import OrderExtra from './components/Order_Extra.vue'
+  import ClientOnly from '@duannx/vue-client-only'
 
   const route = useRoute()
   const { handleErr } = useOrderInfo()
@@ -93,15 +98,19 @@
   })
   const getStorageData = () => {
     const queryBagId = route.query.shoppingBagId
-    const orderConfTemp = orderConfirmStorageData()
-    if (orderConfTemp !== null) {
-      const { tempShoppingBagId, orderWare, orderRemarks } = orderConfTemp
-      shoppingBagId.value = queryBagId || tempShoppingBagId
+    if (!import.meta.env.SSR) {
+      const orderConfTemp = orderConfirmStorageData()
+      if (orderConfTemp !== null) {
+        const { tempShoppingBagId, orderWare, orderRemarks } = orderConfTemp
+        shoppingBagId.value = queryBagId || tempShoppingBagId
 
-      // [note] 确认是否使用缓存数据
-      if (isUseStorageData.value) {
-        submitForm.orderWare = orderWare
-        submitForm.orderRemarks = orderRemarks
+        // [note] 确认是否使用缓存数据
+        if (isUseStorageData.value) {
+          submitForm.orderWare = orderWare
+          submitForm.orderRemarks = orderRemarks
+        }
+      } else {
+        shoppingBagId.value = queryBagId
       }
     } else {
       shoppingBagId.value = queryBagId
@@ -127,20 +136,22 @@
   init()
 
   // 离开页面记录表单
-  window.onbeforeunload = () => {
-    const orderConfTemp = orderConfirmStorageData()
-    // [note] 添加缓存数据：购物袋id，订单备注，订单是否需要餐具
-    const saveDataMap = {
-      ...submitForm,
-      tempShoppingBagId: shoppingBagId.value
-    }
-    if (orderConfTemp !== null) {
-      Object.keys(saveDataMap).forEach(key => {
-        orderConfTemp[key] = saveDataMap[key]
-      })
-      sessionStorage.setItem(ORDERCONFIRMTEMPDATA, JSON.stringify(orderConfTemp))
-    } else {
-      sessionStorage.setItem(ORDERCONFIRMTEMPDATA, JSON.stringify(saveDataMap))
+  if (!import.meta.env.SSR) {
+    window.onbeforeunload = () => {
+      const orderConfTemp = orderConfirmStorageData()
+      // [note] 添加缓存数据：购物袋id，订单备注，订单是否需要餐具
+      const saveDataMap = {
+        ...submitForm,
+        tempShoppingBagId: shoppingBagId.value
+      }
+      if (orderConfTemp !== null) {
+        Object.keys(saveDataMap).forEach(key => {
+          orderConfTemp[key] = saveDataMap[key]
+        })
+        sessionStorage.setItem(ORDERCONFIRMTEMPDATA, JSON.stringify(orderConfTemp))
+      } else {
+        sessionStorage.setItem(ORDERCONFIRMTEMPDATA, JSON.stringify(saveDataMap))
+      }
     }
   }
 </script>

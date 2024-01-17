@@ -1,7 +1,7 @@
 import { renderToString } from 'vue/server-renderer'
 import { createApp } from './app.js'
 
-export async function render (url) {
+export async function render (url, ctx) {
   const { app, router, store } = createApp()
   await router.push(url)
   await router.isReady()
@@ -14,13 +14,12 @@ export async function render (url) {
   if (matchedComponents.length) {
     await Promise.all(matchedComponents.map(async component => {
       if (component.asyncData) {
-        return component.asyncData(store, router.currentRoute.value)
+        return component.asyncData(store, router.currentRoute.value, ctx)
       }
       return null
     }))
   }
 
-  const ctx = {}
-  const html = await renderToString(app, ctx)
+  const html = await renderToString(app)
   return [html, store.state.value]
 }

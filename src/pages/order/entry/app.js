@@ -1,6 +1,7 @@
 import { createSSRApp } from 'vue'
 import App from '../App.vue'
 import { createRouter } from '../router/index.js'
+import { createStore } from '../store/index.js'
 import Toast from '@/plugins/Toast'
 import '@common/styles/reset.less'
 import '@common/styles/common-style.less'
@@ -13,14 +14,16 @@ import { installDirectives } from '@common/directives'
 function createApp () {
   const app = createSSRApp(App)
   const router = createRouter()
+  const store = createStore()
 
   app.use(Toast)
+  app.use(store)
   app.use(router)
 
   // initSentry(app, router)
   installDirectives(app)
 
-  return { app, router }
+  return { app, router, store }
 }
 
 export { createApp }

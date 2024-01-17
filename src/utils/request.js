@@ -5,6 +5,7 @@ import User from '@utils/User'
 // let loading = false
 // const requestCount = 0
 let redirecturi = ''
+let cookies = ''
 // const host = window.location.origin
 
 // const showLoading = () => {
@@ -23,13 +24,17 @@ let redirecturi = ''
 
 const service = axios.create({
   timeout: 30 * 1000,
-  baseURL: 'http://localhost:3000'
+  baseURL: import.meta.env.VITE_BASE_URL,
+  withCredentials: true
 })
 
 // Sign in the request interceptors.
 service.interceptors.request.use(
   config => {
     // showLoading()
+    if (cookies) {
+      config.headers['cookie'] = cookies
+    }
     return config
   },
   error => {
@@ -65,6 +70,8 @@ service.interceptors.response.use(
 )
 
 function serviceInstance (req) {
+  const { ctx = '' } = req
+  cookies = ctx?.cookies ? ctx.cookies : ''
   if (req.params && req.params.redirecturi) {
     redirecturi = req.params.redirecturi
     delete req.params.redirecturi

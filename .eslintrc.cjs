@@ -27,5 +27,6 @@ module.exports = {
     'no-case-declarations': 'off',
     'no-new': 'off',
     'indent': ['off', 2],
+    'dot-notation': 'off'
   }
 }

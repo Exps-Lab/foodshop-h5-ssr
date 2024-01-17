@@ -93,9 +93,9 @@ const route = useRoute()
 const { shop_id } = route.query
 
 defineOptions({
-  asyncData: async (store, router) => {
+  asyncData: async (store, router, ctx) => {
     const { shop_id } = router.query
-    await shopDetailStore(store).getShopInfo({ shop_id })
+    await shopDetailStore(store).getShopInfo({ shop_id }, ctx)
     await shopDetailStore(store).getShopGoodsData({ shop_id })
   }
 })
