@@ -476,16 +476,20 @@ export function priceHandle (price) {
  * @param jumpReplace 跳转是否replace
  */
 export function diffModuleJump (path, query = '', moduleName, jumpReplace = false) {
-  const host = window.location.host
-  // const devUrl = `//${host}/src/pages/${moduleName}/index.html#${path}`
-  const prodUrl = `//${host}${path}`
-  // const baseUrl = import.meta.env.DEV ? devUrl : prodUrl
-  const jumpUrl = prodUrl + (query ? '?' + query : '')
+  if (!import.meta.env.SSR) {
+    const host = window.location.host
+    // const devUrl = `//${host}/src/pages/${moduleName}/index.html#${path}`
+    const prodUrl = `//${host}${path}`
+    // const baseUrl = import.meta.env.DEV ? devUrl : prodUrl
+    const jumpUrl = prodUrl + (query ? '?' + query : '')
 
-  if (jumpReplace) {
-    location.replace(jumpUrl)
+    if (jumpReplace) {
+      location.replace(jumpUrl)
+    } else {
+      location.href = jumpUrl
+    }
   } else {
-    location.href = jumpUrl
+    console.log('ssr模式下伪跳转' + path)
   }
 }
 

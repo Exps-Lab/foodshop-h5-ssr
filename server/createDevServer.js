@@ -5,6 +5,16 @@ import { fileURLToPath } from 'url'
 import { generateInput } from '../viteConf/bundle.js'
 // import { createProxyMiddleware } from 'http-proxy-middleware'
 
+import jsdom from 'jsdom'
+const { JSDOM } = jsdom
+const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
+  url: "http://localhost:3333/",
+})
+global.location = dom.window.location;
+global.document = dom.window.document;
+global.localStorage = dom.window.localStorage;
+global.sessionStorage = dom.window.sessionStorage;
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { modulesNameArr } = generateInput()
 

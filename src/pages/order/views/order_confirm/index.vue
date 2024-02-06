@@ -25,9 +25,9 @@
 </template>
 
 <script setup>
-  import { ref, reactive, computed } from 'vue'
+  import { ref, reactive, computed, defineOptions } from 'vue'
   import { useRoute } from 'vue-router'
-  import { getConfirmDetail, createOrder } from '@/api/order'
+  import { createOrder } from '@/api/order'
   import { useOrderInfo } from '@pages/order/hooks/orderInfo'
   import { orderTotalNeedPay, getDiscountInfo } from '@utils/calcGoodsPrice'
   import { ORDERCONFIRMTEMPDATA } from '@utils/sessionStorage_keys'
@@ -37,13 +37,23 @@
   import GoodsCard from './components/Goods_Card.vue'
   import OrderExtra from './components/Order_Extra.vue'
   import ClientOnly from '@duannx/vue-client-only'
+  import { confirmStore } from '@/pages/order/store/confirm.js'
+
+  defineOptions({
+    asyncData: async (store, router, ctx) => {
+      const { shoppingBagId } = router.query
+      await confirmStore(store).getConfirmDetail({ shoppingBagId }, ctx)
+    }
+  })
 
   const route = useRoute()
   const { handleErr } = useOrderInfo()
+  const { ssrData } = confirmStore()
 
   // 获取确认订单页详情
   const shopData = reactive({})
   const choseGoodsData = reactive([])
+
   // 获取当前商品计算价格
   const getPayPrice = computed(() => {
     return orderTotalNeedPay(choseGoodsData, shopData)
@@ -116,22 +126,12 @@
       shoppingBagId.value = queryBagId
     }
   }
-  const preGetConfirmDetail = async () => {
-    try {
-      const { data: { shopInfo, choseGoods } } = await getConfirmDetail({
-        shoppingBagId: shoppingBagId.value
-      })
 
-      shopInfo.pos = `${shopInfo.pos.lat}, ${shopInfo.pos.lng}`
-      Object.assign(shopData, shopInfo)
-      Object.assign(choseGoodsData, choseGoods)
-    } catch (err) {
-      handleErr(err)
-    }
-  }
   const init = () => {
     getStorageData()
-    preGetConfirmDetail()
+    // 数据从ssr获取并赋值
+    Object.assign(shopData, ssrData.shopData)
+    Object.assign(choseGoodsData, ssrData.choseGoodsData)
   }
   init()
 

@@ -4,6 +4,17 @@ import { generateInput } from '../viteConf/bundle.js'
 
 const { modulesNameArr } = generateInput()
 
+import jsdom from 'jsdom'
+const { JSDOM } = jsdom
+const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
+  url: "http://localhost:3333/",
+})
+global.alert = dom.window.alert;
+global.location = dom.window.location;
+global.document = dom.window.document;
+global.localStorage = dom.window.localStorage;
+global.sessionStorage = dom.window.sessionStorage;
+
 // 判断url属于哪个模块
 const includeModuleName = (url) => {
   let resModuleName = ''

@@ -1,49 +1,55 @@
 import request from '@utils/request.js'
 
-export function getRecentAddress (params) {
+export function getRecentAddress (params, ctx) {
   return request({
     url: '/h5/order/auth/getRecentAddress',
     method: 'get',
-    params
+    params,
+    ctx
   })
 }
 
-export function getConfirmDetail (params) {
+export function getConfirmDetail (params, ctx) {
   return request({
     url: '/h5/order/auth/getConfirmDetail',
     method: 'get',
-    params
+    params,
+    ctx
   })
 }
 
-export function createOrder (data) {
+export function createOrder (data, ctx) {
   return request({
     url: '/h5/order/auth/order/create',
     method: 'post',
-    data
+    data,
+    ctx
   })
 }
 
-export function getOrderDetail (params) {
+export function getOrderDetail (params, ctx) {
   return request({
     url: '/h5/order/auth/order/detail',
     method: 'get',
-    params
+    params,
+    ctx
   })
 }
 
-export function getOrderList (params) {
+export function getOrderList (params, ctx) {
   return request({
     url: '/h5/order/auth/order/list',
     method: 'get',
-    params
+    params,
+    ctx
   })
 }
 
-export function cancelOrder (data) {
+export function cancelOrder (data, ctx) {
   return request({
     url: '/h5/order/auth/order/cancel',
     method: 'post',
-    data
+    data,
+    ctx
   })
 }

@@ -64,7 +64,7 @@ export function useOrderInfo () {
   // 统一处理err
   const handleErr = (err) => {
     if (!err) return new Error('请传入错误信息')
-    const { code, msg, data } = err.data
+    const { code, msg, data } = err.data || {}
     Dialog.alert({
       message: msg,
       theme: 'round-button',
