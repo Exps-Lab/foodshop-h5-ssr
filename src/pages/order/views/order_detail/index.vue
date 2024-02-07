@@ -25,16 +25,21 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue'
-  import { useRoute } from 'vue-router'
-  import { getOrderDetail } from '@/api/order'
+  import { ref, computed, defineOptions } from 'vue'
   import { useOrderInfo } from '@pages/order/hooks/orderInfo'
   import { useOrderBtns } from '@pages/order/hooks/orderBtns'
   import GoodsCard from './components/Goods_Card.vue'
   import OrderStep from './components/Order_Step.vue'
+  import { orderDetailStore } from '@pages/order/store/detail.js'
 
-  const route = useRoute()
-  const { minusTime, countRemainTime, handleErr, calcSendTime } = useOrderInfo()
+  defineOptions({
+    asyncData: async (store, router, ctx) => {
+      const { orderNum } = router.query
+      await orderDetailStore(store).getOrderDetail({ orderNum }, ctx)
+    }
+  })
+
+  const { minusTime, countRemainTime, calcSendTime } = useOrderInfo()
   const { getStatusBtns } = useOrderBtns()
 
   const statusTitle = computed(() => {
@@ -80,24 +85,15 @@
 
   // 初始化数据
   const orderInfo = ref({})
-  // 获取订单详情
-  const preGetOrderDetail = async () => {
-    const orderNum = route.query.orderNum
-    try {
-      const { data } = await getOrderDetail({ orderNum })
-      const { order_expire_time, order_status } = data
-      orderInfo.value = data
-      // 未支付
-      if (order_status === 0) {
-        countRemainTime(order_expire_time)
-      }
-    } catch (err) {
-      handleErr(err)
-    }
-  }
+  const { ssrData } = orderDetailStore()
 
   const init = () => {
-    preGetOrderDetail()
+    orderInfo.value = ssrData.orderInfo
+    const { order_expire_time, order_status } = orderInfo.value
+    // 未支付
+    if (order_status === 0) {
+      countRemainTime(order_expire_time)
+    }
   }
   init()
 </script>
