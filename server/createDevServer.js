@@ -14,6 +14,7 @@ global.location = dom.window.location;
 global.document = dom.window.document;
 global.localStorage = dom.window.localStorage;
 global.sessionStorage = dom.window.sessionStorage;
+global.onbeforeunload = dom.window.onbeforeunload;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { modulesNameArr } = generateInput()

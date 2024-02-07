@@ -23,7 +23,7 @@ class User {
 
   // 统一处理登录
   login (redirecturi) {
-    const url = redirecturi || window.location.href
+    const url = redirecturi || global.location.href
     const query = `redirecturi=${encodeURIComponent(url)}`
     diffModuleJump('/login', query, 'login')
   }

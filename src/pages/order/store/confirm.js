@@ -1,11 +1,12 @@
 
 import { defineStore } from 'pinia'
 import { getConfirmDetail } from '@/api/order'
-import { useOrderInfo } from '@pages/order/hooks/orderInfo.js'
 
 export const confirmStore = defineStore('confirmStore', {
   state: () => {
     return {
+      isShoppingBagValid: null,
+      shoppingBagValidError: null,
       shopData: {},
       choseGoodsData: {}
     }
@@ -17,7 +18,6 @@ export const confirmStore = defineStore('confirmStore', {
   },
   actions: {
     async getConfirmDetail (params, ctx) {
-      const { handleErr } = useOrderInfo()
       try {
         const { data: { shopInfo, choseGoods } } = await getConfirmDetail({
           shoppingBagId: params.shoppingBagId
@@ -26,8 +26,11 @@ export const confirmStore = defineStore('confirmStore', {
         // 赋值
         this.shopData = shopInfo
         this.choseGoodsData = choseGoods
+        this.isShoppingBagValid = true
       } catch (err) {
-        handleErr(err)
+        console.log('=>(confirm.js:30) catch err', err)
+        this.isShoppingBagValid = false
+        this.shoppingBagValidError = err.data
       }
     }
   }

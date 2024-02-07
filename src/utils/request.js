@@ -54,7 +54,7 @@ service.interceptors.response.use(
       // 10002    "没有token或token格式错误"
       // forbidAutoJumpLogin
       if ([10002].includes(res.code) && !response.config.forbidAutoJumpLogin) {
-        redirecturi = redirecturi || window.location.href
+        redirecturi = redirecturi || global.location.href
         User.login(redirecturi)
       }
       return Promise.reject(response)

@@ -2,9 +2,9 @@
 
 <template>
   <div class="main-content">
-    <ClientOnly>
+    <client-only>
       <ChoseAddress ref="addressRef" :shopPos="shopData.pos" :shoppingBagId="shoppingBagId" />
-    </ClientOnly>
+    </client-only>
     <GoodsCard :shopData="shopData" :choseGoodsData="choseGoodsData" :price="getPayPrice" :shopDiscount="shopDiscount"/>
     <ChosePayChannel />
     <ClientOnly>
@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-  import { ref, reactive, computed, defineOptions } from 'vue'
+  import { ref, reactive, computed, defineOptions, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
   import { createOrder } from '@/api/order'
   import { useOrderInfo } from '@pages/order/hooks/orderInfo'
@@ -42,7 +42,11 @@
   defineOptions({
     asyncData: async (store, router, ctx) => {
       const { shoppingBagId } = router.query
-      await confirmStore(store).getConfirmDetail({ shoppingBagId }, ctx)
+      const tempShoppingBagId = global.sessionStorage.getItem('tempShoppingBagId')
+      if (tempShoppingBagId === null || shoppingBagId !== tempShoppingBagId) {
+        global.sessionStorage.setItem('tempShoppingBagId', shoppingBagId)
+      }
+      await confirmStore(store).getConfirmDetail({ shoppingBagId: shoppingBagId || tempShoppingBagId }, ctx)
     }
   })
 
@@ -53,6 +57,9 @@
   // 获取确认订单页详情
   const shopData = reactive({})
   const choseGoodsData = reactive([])
+  // 数据从ssr获取并赋值
+  Object.assign(shopData, ssrData.shopData)
+  Object.assign(choseGoodsData, ssrData.choseGoodsData)
 
   // 获取当前商品计算价格
   const getPayPrice = computed(() => {
@@ -93,7 +100,7 @@
   const shoppingBagId = ref('')
   // 统一获取缓存数据
   const orderConfirmStorageData = () => {
-    const tempData = sessionStorage.getItem(ORDERCONFIRMTEMPDATA)
+    const tempData = window.sessionStorage.getItem(ORDERCONFIRMTEMPDATA)
     return tempData !== null ? JSON.parse(tempData) : null
   }
   // [note] 是否使用缓存数据
@@ -108,19 +115,15 @@
   })
   const getStorageData = () => {
     const queryBagId = route.query.shoppingBagId
-    if (!import.meta.env.SSR) {
-      const orderConfTemp = orderConfirmStorageData()
-      if (orderConfTemp !== null) {
-        const { tempShoppingBagId, orderWare, orderRemarks } = orderConfTemp
-        shoppingBagId.value = queryBagId || tempShoppingBagId
+    const orderConfTemp = orderConfirmStorageData()
+    if (orderConfTemp !== null) {
+      const { tempShoppingBagId, orderWare, orderRemarks } = orderConfTemp
+      shoppingBagId.value = queryBagId || tempShoppingBagId
 
-        // [note] 确认是否使用缓存数据
-        if (isUseStorageData.value) {
-          submitForm.orderWare = orderWare
-          submitForm.orderRemarks = orderRemarks
-        }
-      } else {
-        shoppingBagId.value = queryBagId
+      // [note] 确认是否使用缓存数据
+      if (isUseStorageData.value) {
+        submitForm.orderWare = orderWare
+        submitForm.orderRemarks = orderRemarks
       }
     } else {
       shoppingBagId.value = queryBagId
@@ -129,14 +132,17 @@
 
   const init = () => {
     getStorageData()
-    // 数据从ssr获取并赋值
-    Object.assign(shopData, ssrData.shopData)
-    Object.assign(choseGoodsData, ssrData.choseGoodsData)
+    if (!ssrData.isShoppingBagValid) {
+      handleErr({
+        data: ssrData.shoppingBagValidError
+      })
+    }
   }
-  init()
 
-  // 离开页面记录表单
-  if (!import.meta.env.SSR) {
+  onMounted(() => {
+    init()
+
+    // 离开页面记录表单
     window.onbeforeunload = () => {
       const orderConfTemp = orderConfirmStorageData()
       // [note] 添加缓存数据：购物袋id，订单备注，订单是否需要餐具
@@ -148,12 +154,12 @@
         Object.keys(saveDataMap).forEach(key => {
           orderConfTemp[key] = saveDataMap[key]
         })
-        sessionStorage.setItem(ORDERCONFIRMTEMPDATA, JSON.stringify(orderConfTemp))
+        window.sessionStorage.setItem(ORDERCONFIRMTEMPDATA, JSON.stringify(orderConfTemp))
       } else {
-        sessionStorage.setItem(ORDERCONFIRMTEMPDATA, JSON.stringify(saveDataMap))
+        window.sessionStorage.setItem(ORDERCONFIRMTEMPDATA, JSON.stringify(saveDataMap))
       }
     }
-  }
+  })
 </script>
 
 <style lang="less" scoped>

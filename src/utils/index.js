@@ -24,7 +24,7 @@ export function getQuery (query) {
  * @param  {[String, Null]}  [url=window.location.href] 传入url，默认为当前页面URL
  * @return {Boolean}                                    url是否有参
  */
-export function hasQuery (url = window.location.href) {
+export function hasQuery (url = global.location.href) {
   const firstQuery = url.split('?')
   if (firstQuery.length > 1) {
     return true
@@ -39,7 +39,7 @@ export function hasQuery (url = window.location.href) {
  * @param  {String} url   要删除的url
  * @return {String}       返回删除后的url
  */
-export function delQuery (query, url = window.location.href) {
+export function delQuery (query, url = global.location.href) {
   const urlArr = url.split('?')
   if (urlArr.length > 1 && urlArr[1].indexOf(query) > -1) {
     const _search = urlArr[1]
@@ -53,7 +53,7 @@ export function delQuery (query, url = window.location.href) {
     const urlte = `${urlArr[0]}?${JSON.stringify(obj).replace(/["{}]/g, '').replace(/:/g, '=').replace(/,/g, '&')}`
     return urlte
   } else {
-    return url || window.location.href
+    return url || global.location.href
   }
 }
 
@@ -377,7 +377,7 @@ export function urlToObj (url) {
  * @param value
  * @returns {string}
  */
-export function replaceQuery (url = window.location.href, query, value) {
+export function replaceQuery (url = global.location.href, query, value) {
   const urlArr = url.split('?')
   if (urlArr.length > 1 && urlArr[1].indexOf(query) > -1) {
     const _search = urlArr[1]
@@ -390,7 +390,7 @@ export function replaceQuery (url = window.location.href, query, value) {
     obj[query] = encodeURI(value)
     return `${urlArr[0]}?${JSON.stringify(obj).replace(/["{}]/g, '').replace(/:/g, '=').replace(/,/g, '&')}`
   } else {
-    return url || window.location.href
+    return url || global.location.href
   }
 }
 
